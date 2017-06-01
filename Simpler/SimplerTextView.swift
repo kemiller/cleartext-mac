@@ -12,6 +12,7 @@ import Quartz
 protocol SimplerTextViewDelegate {
     func simplerTextViewKeyUp(_ character:String)
     func simplerTextViewGotComplexWord()
+    func simplerTextViewGotSimpleWord()
 }
 
 class SimplerTextView: NSTextView, SimplerTextStorageDelegate {
@@ -46,9 +47,25 @@ class SimplerTextView: NSTextView, SimplerTextStorageDelegate {
         //simplerDelegate.simplerTextViewGotComplexWord()
         // so to not duplicate the effect
         
-        if(UserDefaults.standard.bool(forKey: C.PREF_FORCESELECT)){
-            setSelectedRange(range)
-            }
+        //if(UserDefaults.standard.bool(forKey: C.PREF_FORCESELECT)){
+        //setSelectedRange(range)
+        Swift.print("setting underline for complex ")
+        simplerStorage.addAttribute(NSStrikethroughStyleAttributeName,
+                                    value: NSUnderlineStyle.styleSingle.rawValue, range: range)
+        //    }
+    }
+    
+    func simplerTextStorageGotSimpleWord() {
+        simplerDelegate.simplerTextViewGotSimpleWord()
+        
+    }
+    
+    
+    func simplerTextStorageGotSimpleWordAtRange(_ range:NSRange) {
+        typingAttributes[NSStrikethroughStyleAttributeName] = NSUnderlineStyle.styleNone.rawValue
+        let newrange = NSRange(location: range.location, length: range.length+1)
+        simplerStorage.addAttribute(NSStrikethroughStyleAttributeName,
+                                    value: NSUnderlineStyle.styleNone.rawValue, range: newrange)
     }
     
     func simplerTextStorageShouldChangeAtts(_ atts: [String : AnyObject]) {
@@ -67,6 +84,7 @@ class SimplerTextView: NSTextView, SimplerTextStorageDelegate {
         font = C.editorFont
         backgroundColor = C.editorBackgroundColor
         textColor = C.editorTextColor
+        isRichText = true
     }
     
     override func didChangeText() {

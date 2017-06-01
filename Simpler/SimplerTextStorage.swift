@@ -11,6 +11,8 @@ import Cocoa
 protocol SimplerTextStorageDelegate {
     func simplerTextStorageGotComplexWord()
     func simplerTextStorageGotComplexWordAtRange(_ range:NSRange)
+    func simplerTextStorageGotSimpleWord()
+    func simplerTextStorageGotSimpleWordAtRange(_ range:NSRange)
     func simplerTextStorageShouldChangeAtts(_ atts:[String:AnyObject])
 }
 
@@ -78,7 +80,7 @@ class SimplerTextStorage: NSTextStorage {
 //        let timer = ParkBenchTimer()
 
         if self.checker.isSimpleWord(word) { // could have sworn these should be the other way around. But actual response is king.
-//            processGoodWord(word, atRange: range)
+            processGoodWord(word, atRange: range)
         } else {
             processBadWord(word, atRange: range)
         }
@@ -87,9 +89,13 @@ class SimplerTextStorage: NSTextStorage {
     func processBadWord(_ word:String, atRange range:NSRange){
         simpleDelegate?.simplerTextStorageGotComplexWord()
         simpleDelegate?.simplerTextStorageGotComplexWordAtRange(range)
+        backingStore.addAttribute(NSUnderlineStyleAttributeName,
+                                    value: NSUnderlineStyle.patternDash.rawValue, range: range)
     }
     
     func processGoodWord(_ word:String, atRange range:NSRange){
+        simpleDelegate?.simplerTextStorageGotSimpleWord()
+        simpleDelegate?.simplerTextStorageGotSimpleWordAtRange(range)
     }
     
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [String : Any] {

@@ -102,7 +102,10 @@ class ViewController: NSViewController, SimplerTextViewDelegate {
         makeBadSound()
     }
     
-    
+    func simplerTextViewGotSimpleWord() {
+        print("got simple")
+    }
+
     
     func playBeginAnimation(_ completion:@escaping ()->Void){
         print("start animation")
